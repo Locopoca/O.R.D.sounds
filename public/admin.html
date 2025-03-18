@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Cypherpunk Player</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="terminal">
+        <div class="header">[ ADMIN CONSOLE ]</div>
+        <div id="track-listing"></div>
+        <div class="admin-form">
+            <h3>[ ADD NEW TRACK ]</h3>
+            <input type="text" id="cid" placeholder="CID">
+            <input type="text" id="author" placeholder="Author">
+            <input type="text" id="length" placeholder="Length (seconds)">
+            <input type="text" id="description" placeholder="Description">
+            <button onclick="addTrack()">[ SUBMIT ]</button>
+        </div>
+    </div>
+    <script>
+        let musicList = [];
+
+        // Fetch and display current list
+        fetch('/api/musicList')
+            .then(response => response.json())
+            .then(data => {
+                musicList = data;
+                renderList();
+            });
+
+        function renderList() {
+            const listing = document.getElementById('track-listing');
+            listing.innerHTML = '<h3>[ CURRENT TRACKS ]</h3>';
+            musicList.forEach((track, index) => {
+                const div = document.createElement('div');
+                div.textContent = `${track.author} - ${track.description} (${track.length}s) [${track.cid}]`;
+                const deleteBtn = document.createElement('button');
+                deleteBtn.textContent = '[DEL]';
+                deleteBtn.onclick = () => deleteTrack(index);
+                div.appendChild(deleteBtn);
+                listing.appendChild(div);
+            });
+        }
+
+        function addTrack() {
+            const cid = document.getElementById('cid').value;
+            const author = document.getElementById('author').value;
+            const length = document.getElementById('length').value;
+            const description = document.getElementById('description').value;
+
+            if (cid && author && length && description) {
+                musicList.push({ cid, author, length, description });
+                saveList();
+                renderList();
+                clearForm();
+            } else {
+                alert('All fields required');
+            }
+        }
+
+        function deleteTrack(index) {
+            musicList.splice(index, 1);
+            saveList();
+            renderList();
+        }
+
+        function saveList() {
+            fetch('/api/musicList', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(musicList)
+            }).then(response => response.json())
+            .then(data => console.log(data.message))
+            .catch(error => console.error('Error saving list:', error));
+        }
+
+        function clearForm() {
+            document.getElementById('cid').value = '';
+            document.getElementById('author').value = '';
+            document.getElementById('length').value = '';
+            document.getElementById('description').value = '';
+        }
+    </script>
+</body>
+</html>
