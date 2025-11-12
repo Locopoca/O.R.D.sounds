@@ -9,7 +9,17 @@
 </head>
 <body>
     <div id="background"></div>
-        <div class="terminal">
+    <div id="cursors"></div> <!-- Container for peer cursors -->
+    <div class="multiplayer">
+        <button id="join-room">[ JOIN ROOM ]</button>
+        <div id="peer-info">[ NO PEERS ]</div>
+    </div>
+    <div id="chat" class="chat hidden">
+        <div class="header">[ CHAT ]</div>
+        <ul id="chat-messages"></ul>
+        <input type="text" id="chat-input" placeholder="Type message...">
+    </div>
+    <div class="terminal">
         <div class="header">[ DIZAJN MU-ZIK ]</div>
         <div class="track-display">
             <div id="track-info"></div>
@@ -35,6 +45,7 @@
         </div>
     </div>
     <script src="background.js"></script>
+    <script type="module" src="multiplayer.js"></script>
     <script src="scripts.js"></script>
 </body>
 </html>

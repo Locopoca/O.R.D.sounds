@@ -4,14 +4,12 @@
     box-sizing: border-box;
     user-select: none;
 }
-
 body {
     background-color: #0a0a0a;
     color: #00ff00;
     font-family: 'Courier New', Courier, monospace;
     overflow: hidden;
 }
-
 #background {
     position: fixed;
     top: 0;
@@ -20,7 +18,6 @@ body {
     height: 100%;
     z-index: 0;
 }
-
 .terminal {
     position: absolute;
     top: 50%;
@@ -34,24 +31,20 @@ body {
     box-shadow: 0 0 5px rgba(255, 0, 187, 0.8);
     z-index: 1;
 }
-
 .header, .playlist-header {
     text-align: center;
     font-size: 1em;
     margin-bottom: 15px;
     text-transform: uppercase;
 }
-
 .track-display {
     margin-bottom: 15px;
     text-align: center;
 }
-
 #track-info {
     font-size: 0.9em;
     white-space: pre-wrap;
 }
-
 .controls, .volume {
     display: flex;
     justify-content: center;
@@ -59,7 +52,6 @@ body {
     gap: 15px;
     margin-bottom: 15px;
 }
-
 button {
     background: none;
     border: 1px solid #00ff00;
@@ -71,16 +63,13 @@ button {
     cursor: pointer;
     transition: color 0.3s, border-color 0.3s;
 }
-
 button:hover {
     color: #ff22e5;
     border-color: #ff22e5;
 }
-
 .volume span {
     font-size: 0.9em;
 }
-
 #volume-slider {
     -webkit-appearance: none;
     appearance: none;
@@ -91,7 +80,6 @@ button:hover {
     outline: none;
     cursor: pointer;
 }
-
 #volume-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
@@ -101,7 +89,6 @@ button:hover {
     border: 1px solid #ff22e5;
     cursor: pointer;
 }
-
 #volume-slider::-moz-range-thumb {
     width: 12px;
     height: 12px;
@@ -109,29 +96,23 @@ button:hover {
     border: 1px solid #ff22e5;
     cursor: pointer;
 }
-
 #volume-slider::-webkit-slider-thumb:hover {
     background: #ffffff;
     border-color: #ffffff;
 }
-
 #volume-slider::-moz-range-thumb:hover {
     background: #ffffff;
     border-color: #ffffff;
 }
-
 .playlist {
     text-align: left;
 }
-
 .playlist-header {
     text-align: left;
 }
-
 #track-list {
     list-style: none;
 }
-
 #track-list li {
     padding: 8px;
     border: 1px solid #00ff00;
@@ -140,46 +121,37 @@ button:hover {
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s;
 }
-
 #track-list li:hover {
     background-color: #00ff00;
     color: #0a0a0a;
 }
-
 @media (max-width: 600px) {
     .terminal {
         width: 95%;
     }
-
     .header, .playlist-header {
         font-size: 0.8em;
     }
-
     button {
         padding: 4px 8px;
         font-size: 0.8em;
     }
-
     #volume-slider {
         width: 80px;
     }
-
     #volume-slider::-webkit-slider-thumb,
     #volume-slider::-moz-range-thumb {
         width: 10px;
         height: 10px;
     }
 }
-
 .admin-form {
     margin-top: 20px;
 }
-
 .admin-form h3 {
     font-size: 1em;
     margin-bottom: 10px;
 }
-
 .admin-form input {
     background: #0a0a0a;
     border: 1px solid #00ff00;
@@ -189,27 +161,23 @@ button:hover {
     width: 100%;
     font-family: 'Courier New', Courier, monospace;
 }
-
 #track-listing div {
     margin: 5px 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
-
 .shader-controls {
     display: flex;
     flex-direction: column;
     gap: 10px;
     margin-bottom: 15px;
 }
-
 .shader-controls div {
     display: flex;
     align-items: center;
     gap: 10px;
 }
-
 .shader-controls input[type="range"] {
     -webkit-appearance: none;
     appearance: none;
@@ -220,7 +188,6 @@ button:hover {
     outline: none;
     cursor: pointer;
 }
-
 .shader-controls input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
@@ -230,7 +197,6 @@ button:hover {
     border: 1px solid #00ff00;
     cursor: pointer;
 }
-
 .shader-controls input[type="range"]::-moz-range-thumb {
     width: 12px;
     height: 12px;
@@ -238,25 +204,109 @@ button:hover {
     border: 1px solid #00ff00;
     cursor: pointer;
 }
-
 .shader-controls input[type="range"]::-webkit-slider-thumb:hover {
     background: #ffffff;
     border-color: #ffffff;
 }
-
 .shader-controls input[type="range"]::-moz-range-thumb:hover {
     background: #ffffff;
     border-color: #ffffff;
 }
-
 @media (max-width: 600px) {
     .shader-controls input[type="range"] {
         width: 80px;
     }
-
     .shader-controls input[type="range"]::-webkit-slider-thumb,
     .shader-controls input[type="range"]::-moz-range-thumb {
         width: 10px;
         height: 10px;
     }
+}
+.multiplayer {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 2;
+}
+.multiplayer button {
+  padding: 5px 10px;
+}
+.multiplayer #peer-info {
+  font-size: 0.8em;
+}
+.chat {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  width: 300px;
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid #ff228b;
+  padding: 10px;
+  z-index: 3;
+  box-shadow: 0 0 5px rgba(255, 0, 187, 0.8);
+}
+.chat .header {
+  text-align: center;
+  margin-bottom: 10px;
+}
+.chat ul {
+  list-style: none;
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+  /* Custom scrollbar for WebKit browsers */
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #00ff00 rgba(0, 0, 0, 0.8); /* Firefox */
+}
+.chat ul::-webkit-scrollbar {
+  width: 8px; /* Width of the scrollbar */
+}
+.chat ul::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.8); /* Track color */
+  border-radius: 4px;
+}
+.chat ul::-webkit-scrollbar-thumb {
+  background: #00ff00; /* Thumb color */
+  border-radius: 4px;
+  border: 1px solid #ff228b; /* Border for thumb */
+}
+.chat ul::-webkit-scrollbar-thumb:hover {
+  background: #ff228b; /* Hover color */
+}
+.chat li {
+  font-size: 0.8em;
+  margin-bottom: 5px;
+  word-break: break-word;
+}
+.chat input {
+  width: 100%;
+  background: #0a0a0a;
+  border: 1px solid #00ff00;
+  color: #00ff00;
+  padding: 5px;
+  font-family: inherit;
+}
+.hidden {
+  display: none;
+}
+#cursor-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+.cursor {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: #ff22e5;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
 }
