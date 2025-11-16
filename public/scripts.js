@@ -31,7 +31,6 @@ function populateTrackList() {
         li.addEventListener('click', () => {
             console.log('Track clicked:', index); // Debug
             playTrack(index);
-            if (window.sendTrack) window.sendTrack(index); // Use exposed function
         });
         trackList.appendChild(li);
     });
@@ -49,11 +48,11 @@ function playTrack(index) {
         const track = musicList[index];
         console.log('Playing track:', track); // Debug
         audioPlayer.src = `https://ipfs.io/ipfs/${track.cid}`; // Direct IPFS URL
+        audioPlayer.currentTime = 0; // Reset time for new track
         audioPlayer.play().then(() => {
+            console.log('Track started playing successfully'); // Debug
             playPauseBtn.textContent = '[||]';
             trackInfo.textContent = `${track.author} | ${formatLength(track.length)} | ${track.description}`;
-            if (window.sendTrack) window.sendTrack(currentTrackIndex);
-            if (window.sendTime) window.sendTime(audioPlayer.currentTime);
         }).catch(error => {
             console.error('Error playing audio:', error); // Debug
             trackInfo.textContent = "[PLAYBACK ERROR - CHECK CID]";
@@ -65,14 +64,13 @@ playPauseBtn.addEventListener('click', () => {
     console.log('Play/pause clicked. Paused?', audioPlayer.paused); // Debug
     if (audioPlayer.paused) {
         audioPlayer.play().then(() => {
+            console.log('Resumed playing'); // Debug
             playPauseBtn.textContent = '[||]';
-            if (window.sendPlay) window.sendPlay();
-            if (window.sendTime) window.sendTime(audioPlayer.currentTime);
         }).catch(error => console.error('Error resuming audio:', error));
     } else {
         audioPlayer.pause();
+        console.log('Paused audio'); // Debug
         playPauseBtn.textContent = '[>]';
-        if (window.sendPause) window.sendPause();
     }
 });
 
@@ -119,6 +117,7 @@ audioPlayer.addEventListener('ended', () => {
     playTrack(newIndex);
 });
 
+// Simulate audio intensity without AudioContext
 function updateAudioIntensity() {
     requestAnimationFrame(updateAudioIntensity);
     if (!audioPlayer.paused && audioPlayer.duration) {

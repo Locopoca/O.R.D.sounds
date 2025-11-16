@@ -13,14 +13,14 @@ let sendPlay, getPlay, sendPause, getPause, sendTrack, getTrack, sendTime, getTi
 let cursors = {}; // Track peer cursors
 let peerCount = 0; // Track current peers for max limit
 
-console.log('Multiplayer module loaded via CDN. Config:', config); // Debug: Confirm module load
+console.log('Multiplayer module loaded via CDN. Config:', config); // Debug
 
 joinButton.addEventListener('click', () => {
   console.log('Join button clicked. Attempting to join room:', roomId); // Debug
   try {
     room = joinRoom(config, roomId);
     console.log('Room joined successfully:', room); // Debug
-    console.log('Self ID:', room.selfId); // Debug: Log self ID for chat
+    console.log('Self ID:', room.selfId); // Debug
   } catch (error) {
     console.error('Error joining room:', error); // Debug
     alert('Failed to join room: ' + error.message);
@@ -44,19 +44,23 @@ joinButton.addEventListener('click', () => {
 
   getPlay(() => {
     console.log('Received play signal'); // Debug
-    if (audioPlayer.paused) audioPlayer.play();
+    if (audioPlayer.paused) {
+      audioPlayer.play().then(() => console.log('Synced play success')); // Debug
+    }
   });
   getPause(() => {
     console.log('Received pause signal'); // Debug
     if (!audioPlayer.paused) audioPlayer.pause();
   });
   getTrack((index) => {
-    console.log('Received track change:', index); // Debug
-    playTrack(index);
+    console.log('Received track change to:', index); // Debug
+    playTrack(index); // This will reset time to 0 and play
   });
   getTime((time) => {
-    console.log('Received time sync:', time); // Debug
-    audioPlayer.currentTime = time;
+    console.log('Received time sync to:', time); // Debug
+    if (Math.abs(audioPlayer.currentTime - time) > 1) { // Only sync if >1s off
+      audioPlayer.currentTime = time;
+    }
   });
   getVolume((vol) => {
     console.log('Received volume sync:', vol); // Debug
@@ -73,29 +77,29 @@ joinButton.addEventListener('click', () => {
     window.adjustShader.setDitherScale(data.dither);
   });
   getMessage((msg, peerId) => {
-    console.log('Received chat message from', peerId, ':', msg); // Debug
+    console.log('Received chat from', peerId, ':', msg); // Debug
     const li = document.createElement('li');
     li.textContent = `${peerId.slice(0,4)}: ${msg}`;
     chatMessages.appendChild(li);
     chatMessages.scrollTop = chatMessages.scrollHeight;
   });
   getCursor((pos, peerId) => {
-    console.log('Received cursor update from', peerId, ':', pos); // Debug
+    console.log('Received cursor from', peerId, ':', pos); // Debug
     if (!cursors[peerId]) {
       cursors[peerId] = document.createElement('div');
       cursors[peerId].className = 'cursor';
-      cursors[peerId].style.backgroundColor = `#${peerId.slice(0,6)}`; // Unique color based on peer ID
+      cursors[peerId].style.backgroundColor = `#${peerId.slice(0,6)}`;
       cursorContainer.appendChild(cursors[peerId]);
-      console.log('Created cursor for peer:', peerId); // Debug
+      console.log('Created cursor for', peerId); // Debug
     }
     cursors[peerId].style.left = `${pos.x * 100}%`;
     cursors[peerId].style.top = `${pos.y * 100}%`;
   });
 
   room.onPeerJoin((peerId) => {
-    console.log('Peer joined:', peerId, 'Total peers:', ++peerCount); // Debug
+    console.log('Peer joined:', peerId, 'Total:', ++peerCount); // Debug
     if (peerCount > 8) {
-      console.warn('Room exceeded max peers!'); // Debug
+      console.warn('Room full!'); // Debug
       alert('Room is full (max 8 players)');
       room.leave();
       room = null;
@@ -104,77 +108,75 @@ joinButton.addEventListener('click', () => {
       peerCount = 0;
       return;
     }
-    // Sync state to new peer
-    sendTrack(currentTrackIndex);
-    sendVolume(volumeSlider.value);
-    sendShader(getShaderState());
+    // Sync current state to new peer
+    if (window.sendTrack) window.sendTrack(currentTrackIndex);
+    if (window.sendVolume) window.sendVolume(volumeSlider.value);
+    if (window.sendShader) window.sendShader(getShaderState());
     if (!audioPlayer.paused) {
-      sendPlay();
-      sendTime(audioPlayer.currentTime);
+      if (window.sendPlay) window.sendPlay();
+      if (window.sendTime) window.sendTime(audioPlayer.currentTime);
     } else {
-      sendPause();
+      if (window.sendPause) window.sendPause();
     }
     updatePeers();
   });
 
   room.onPeerLeave((peerId) => {
-    console.log('Peer left:', peerId, 'Total peers:', --peerCount); // Debug
+    console.log('Peer left:', peerId, 'Total:', --peerCount); // Debug
     if (cursors[peerId]) {
       cursorContainer.removeChild(cursors[peerId]);
       delete cursors[peerId];
-      console.log('Removed cursor for peer:', peerId); // Debug
     }
     updatePeers();
   });
 
-  // Show chat
   chat.classList.remove('hidden');
-  console.log('Chat UI shown'); // Debug
+  console.log('Chat shown'); // Debug
 
-  // Cursor sharing (throttled)
+  // Cursor sharing
   let lastCursorSend = 0;
   document.addEventListener('mousemove', (e) => {
-    if (Date.now() - lastCursorSend > 50) { // Throttle to 20fps
+    if (Date.now() - lastCursorSend > 50) {
       try {
         sendCursor({x: e.clientX / window.innerWidth, y: e.clientY / window.innerHeight});
         lastCursorSend = Date.now();
       } catch (error) {
-        console.error('Error sending cursor:', error); // Debug
+        console.error('Cursor send error:', error); // Debug
       }
     }
   });
 
-  // Chat input (send on Enter)
+  // Chat input
   chatInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter' && chatInput.value.trim()) {
       const msg = chatInput.value.trim();
       try {
         sendMessage(msg);
-        console.log('Sent chat message:', msg); // Debug
-        // Add own message to chat for visibility
+        console.log('Sent chat:', msg); // Debug
+        // Show own message
         const li = document.createElement('li');
         li.textContent = `You: ${msg}`;
-        li.style.color = '#ff228b'; // Highlight own messages
+        li.style.color = '#ff228b';
         chatMessages.appendChild(li);
         chatMessages.scrollTop = chatMessages.scrollHeight;
         chatInput.value = '';
       } catch (error) {
-        console.error('Error sending chat:', error); // Debug
+        console.error('Chat send error:', error); // Debug
       }
     }
   });
 
   updatePeers();
-  joinButton.disabled = true; // Disable after join
-  joinButton.textContent = '[ JOINED ]'; // Update button text
-  console.log('Multiplayer setup complete. Ready for peers.'); // Debug
+  joinButton.disabled = true;
+  joinButton.textContent = '[ JOINED ]';
+  console.log('Setup complete'); // Debug
 });
 
 function updatePeers() {
   if (room) {
     const peers = Object.keys(room.getPeers()).length;
     peerInfo.textContent = `[ PEERS: ${peers} / 8 ]`;
-    console.log('Updated peer count:', peers); // Debug
+    console.log('Peer update:', peers); // Debug
   }
 }
 
@@ -186,10 +188,10 @@ function getShaderState() {
   };
 }
 
-// Expose functions globally for scripts.js compatibility
-window.sendPlay = () => { if (room) { console.log('Sending play'); sendPlay(); } };
-window.sendPause = () => { if (room) { console.log('Sending pause'); sendPause(); } };
-window.sendTrack = (index) => { if (room) { console.log('Sending track:', index); sendTrack(index); } };
-window.sendTime = (time) => { if (room) { console.log('Sending time:', time); sendTime(time); } };
-window.sendVolume = (vol) => { if (room) { console.log('Sending volume:', vol); sendVolume(vol); } };
-window.sendShader = (state) => { if (room) { console.log('Sending shader:', state); sendShader(state); } };
+// Global functions for sync (called from scripts.js)
+window.sendPlay = () => { if (room) { console.log('Broadcast play'); sendPlay(); } };
+window.sendPause = () => { if (room) { console.log('Broadcast pause'); sendPause(); } };
+window.sendTrack = (index) => { if (room) { console.log('Broadcast track:', index); sendTrack(index); } };
+window.sendTime = (time) => { if (room) { console.log('Broadcast time:', time); sendTime(time); } };
+window.sendVolume = (vol) => { if (room) { console.log('Broadcast volume:', vol); sendVolume(vol); } };
+window.sendShader = (state) => { if (room) { console.log('Broadcast shader:', state); sendShader(state); } };
