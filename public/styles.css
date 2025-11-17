@@ -249,6 +249,9 @@ button:hover {
   padding: 10px;
   z-index: 3;
   box-shadow: 0 0 5px rgba(255, 0, 187, 0.8);
+  cursor: move;
+  user-select: none;
+  transition: none; /* Disable transitions for smooth dragging */
 }
 .chat .header {
   text-align: center;
@@ -292,6 +295,12 @@ button:hover {
   font-family: inherit;
 }
 .hidden {
+  display: none;
+}
+.terminal-hidden .terminal {
+  display: none;
+}
+.chat-hidden .chat {
   display: none;
 }
 #cursor-container {

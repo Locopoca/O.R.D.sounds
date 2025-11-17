@@ -9,6 +9,8 @@ const ditherSlider = document.getElementById('dither-slider');
 const redSlider = document.getElementById('red-slider');
 const greenSlider = document.getElementById('green-slider');
 const blueSlider = document.getElementById('blue-slider');
+const toggleTerminalButton = document.getElementById('toggle-terminal');
+const toggleChatButton = document.getElementById('toggle-chat');
 const trackInfo = document.getElementById('track-info');
 const trackList = document.getElementById('track-list');
 let musicList = [];
@@ -128,6 +130,20 @@ blueSlider.addEventListener('input', () => {
     window.adjustShader.setBgColorB(parseInt(blueSlider.value));
 });
 
+toggleTerminalButton.addEventListener('click', () => {
+    document.body.classList.toggle('terminal-hidden');
+    const isHidden = document.body.classList.contains('terminal-hidden');
+    toggleTerminalButton.textContent = isHidden ? '[ SHOW PLAYER ]' : '[ HIDE PLAYER ]';
+    console.log('Terminal toggled:', isHidden ? 'hidden' : 'shown'); // Debug
+});
+
+toggleChatButton.addEventListener('click', () => {
+    document.body.classList.toggle('chat-hidden');
+    const isHidden = document.body.classList.contains('chat-hidden');
+    toggleChatButton.textContent = isHidden ? '[ SHOW CHAT ]' : '[ HIDE CHAT ]';
+    console.log('Chat toggled:', isHidden ? 'hidden' : 'shown'); // Debug
+});
+
 audioPlayer.volume = volumeSlider.value / 100;
 audioPlayer.addEventListener('ended', () => {
     const newIndex = (currentTrackIndex + 1) % musicList.length;
@@ -155,6 +171,64 @@ function getShaderState() {
     dither: parseFloat(ditherSlider.value)
   };
 }
+
+// Chat drag functionality
+const chat = document.getElementById('chat');
+let isDraggingChat = false;
+let chatOffsetX, chatOffsetY;
+
+chat.addEventListener('mousedown', (e) => {
+    if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') {
+        isDraggingChat = true;
+        chatOffsetX = e.clientX - chat.offsetLeft;
+        chatOffsetY = e.clientY - chat.offsetTop;
+        chat.style.cursor = 'grabbing';
+        e.preventDefault();
+    }
+});
+
+document.addEventListener('mousemove', (e) => {
+    if (isDraggingChat) {
+        const newX = e.clientX - chatOffsetX;
+        const newY = e.clientY - chatOffsetY;
+
+        // Keep chat within viewport bounds
+        const maxX = window.innerWidth - chat.offsetWidth;
+        const maxY = window.innerHeight - chat.offsetHeight;
+
+        chat.style.left = Math.max(0, Math.min(newX, maxX)) + 'px';
+        chat.style.top = Math.max(0, Math.min(newY, maxY)) + 'px';
+        chat.style.right = 'auto';
+        chat.style.bottom = 'auto';
+    }
+});
+
+document.addEventListener('mouseup', () => {
+    if (isDraggingChat) {
+        isDraggingChat = false;
+        chat.style.cursor = 'move';
+    }
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+    // Hide/show terminal with 'H' key
+    if (e.key.toLowerCase() === 'h') {
+        e.preventDefault();
+        document.body.classList.toggle('terminal-hidden');
+        const isHidden = document.body.classList.contains('terminal-hidden');
+        toggleTerminalButton.textContent = isHidden ? '[ SHOW PLAYER ]' : '[ HIDE PLAYER ]';
+        console.log('Terminal toggled via keyboard:', isHidden ? 'hidden' : 'shown'); // Debug
+    }
+    // Hide/show chat with 'C' key
+    if (e.key.toLowerCase() === 'c') {
+        e.preventDefault();
+        document.body.classList.toggle('chat-hidden');
+        const isHidden = document.body.classList.contains('chat-hidden');
+        toggleChatButton.textContent = isHidden ? '[ SHOW CHAT ]' : '[ HIDE CHAT ]';
+        console.log('Chat toggled via keyboard:', isHidden ? 'hidden' : 'shown'); // Debug
+    }
+});
 
 trackInfo.textContent = "SELECT A TRACK TO BEGIN";
 console.log('Scripts.js loaded. Exposed functions ready.'); // Debug
