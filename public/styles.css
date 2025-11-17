@@ -317,7 +317,6 @@ button:hover {
   width: 10px;
   height: 10px;
   background-color: #ff22e5;
-  border-radius: 50%;
   transform: translate(-50%, -50%);
   pointer-events: none;
 }
