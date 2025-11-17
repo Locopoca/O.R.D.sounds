@@ -1,4 +1,4 @@
-import {joinRoom} from 'https://esm.run/trystero/nostr'
+import {joinRoom} from 'https://esm.run/trystero/torrent'
 
 const config = { appId: 'o.r.d.sounds' };
 const roomId = 'main-room'; // Fixed room ID
@@ -72,9 +72,15 @@ joinButton.addEventListener('click', () => {
     speedSlider.value = data.speed;
     pixelSlider.value = data.pixel;
     ditherSlider.value = data.dither;
+    if (data.red !== undefined) redSlider.value = data.red;
+    if (data.green !== undefined) greenSlider.value = data.green;
+    if (data.blue !== undefined) blueSlider.value = data.blue;
     window.adjustShader.setSpeed(data.speed);
     window.adjustShader.setPixelSize(data.pixel);
     window.adjustShader.setDitherScale(data.dither);
+    if (data.red !== undefined) window.adjustShader.setBgColorR(data.red);
+    if (data.green !== undefined) window.adjustShader.setBgColorG(data.green);
+    if (data.blue !== undefined) window.adjustShader.setBgColorB(data.blue);
   });
   getMessage((msg, peerId) => {
     console.log('Received chat from', peerId, ':', msg); // Debug
@@ -184,7 +190,10 @@ function getShaderState() {
   return {
     speed: parseFloat(speedSlider.value),
     pixel: parseFloat(pixelSlider.value),
-    dither: parseFloat(ditherSlider.value)
+    dither: parseFloat(ditherSlider.value),
+    red: parseInt(redSlider.value),
+    green: parseInt(greenSlider.value),
+    blue: parseInt(blueSlider.value)
   };
 }
 
