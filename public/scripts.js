@@ -212,6 +212,12 @@ document.addEventListener('mouseup', () => {
 
 // Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
+    // Don't trigger hotkeys if user is typing in an input field
+    const activeElement = document.activeElement;
+    if (activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA')) {
+        return; // Allow normal typing behavior
+    }
+
     // Hide/show terminal with 'H' key
     if (e.key.toLowerCase() === 'h') {
         e.preventDefault();
