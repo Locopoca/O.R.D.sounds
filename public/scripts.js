@@ -6,6 +6,9 @@ const volumeSlider = document.getElementById('volume-slider');
 const speedSlider = document.getElementById('speed-slider');
 const pixelSlider = document.getElementById('pixel-slider');
 const ditherSlider = document.getElementById('dither-slider');
+const redSlider = document.getElementById('red-slider');
+const greenSlider = document.getElementById('green-slider');
+const blueSlider = document.getElementById('blue-slider');
 const trackInfo = document.getElementById('track-info');
 const trackList = document.getElementById('track-list');
 let musicList = [];
@@ -108,6 +111,21 @@ ditherSlider.addEventListener('input', () => {
     console.log('Dither changed to:', ditherSlider.value); // Debug
     window.adjustShader.setDitherScale(parseFloat(ditherSlider.value));
     if (window.sendShader) window.sendShader(getShaderState());
+});
+
+redSlider.addEventListener('input', () => {
+    console.log('Red changed to:', redSlider.value); // Debug
+    window.adjustShader.setBgColorR(parseInt(redSlider.value));
+});
+
+greenSlider.addEventListener('input', () => {
+    console.log('Green changed to:', greenSlider.value); // Debug
+    window.adjustShader.setBgColorG(parseInt(greenSlider.value));
+});
+
+blueSlider.addEventListener('input', () => {
+    console.log('Blue changed to:', blueSlider.value); // Debug
+    window.adjustShader.setBgColorB(parseInt(blueSlider.value));
 });
 
 audioPlayer.volume = volumeSlider.value / 100;

@@ -169,7 +169,8 @@ button:hover {
 }
 .shader-controls {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
     gap: 10px;
     margin-bottom: 15px;
 }
@@ -177,6 +178,7 @@ button:hover {
     display: flex;
     align-items: center;
     gap: 10px;
+    min-width: 120px;
 }
 .shader-controls input[type="range"] {
     -webkit-appearance: none;

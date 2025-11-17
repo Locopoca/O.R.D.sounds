@@ -16,7 +16,10 @@ const material = new THREE.ShaderMaterial({
         u_ditherScale: { value: 1.0 },
         u_rotSpeed: { value: 0.1 },
         u_warpAmpl: { value: 3.1123123123 },
-        u_audioIntensity: { value: 0.5 }
+        u_audioIntensity: { value: 0.5 },
+        u_bgColorR: { value: 242.0 / 255.0 },
+        u_bgColorG: { value: 242.0 / 255.0 },
+        u_bgColorB: { value: 242.0 / 255.0 }
     },
     vertexShader: `
         void main() {
@@ -35,6 +38,9 @@ const material = new THREE.ShaderMaterial({
         uniform float u_rotSpeed;
         uniform float u_warpAmpl;
         uniform float u_audioIntensity;
+        uniform float u_bgColorR;
+        uniform float u_bgColorG;
+        uniform float u_bgColorB;
 
         #define HEX(hex) vec4( \
             float((hex >> 16) & 0xFF) / 255.0, \
@@ -43,7 +49,6 @@ const material = new THREE.ShaderMaterial({
             float((hex >> 24) & 0xFF) / 255.0  \
         )
 
-        const vec4 COLOR_DARK = HEX(0xf2f2f2);
         const vec4 COLOR_LIGHT = HEX(0xff228b);
         const float WARP_INIT = 1.0;
         const float WARP_ITER = 2.112312321;
@@ -86,6 +91,8 @@ const material = new THREE.ShaderMaterial({
         }
 
         void main() {
+            vec4 COLOR_DARK = vec4(u_bgColorR, u_bgColorG, u_bgColorB, 1.0);
+
             vec2 pixelatedCoord = floor(gl_FragCoord.xy / u_pixelSize) * u_pixelSize + u_pixelSize / 2.0;
             vec2 uv = (2.0 * pixelatedCoord - u_resolution.xy) / min(u_resolution.x, u_resolution.y);
 
@@ -145,5 +152,8 @@ window.adjustShader = {
     setSpeed: (value) => material.uniforms.u_speed.value = value,
     setPixelSize: (value) => material.uniforms.u_pixelSize.value = value,
     setDitherScale: (value) => material.uniforms.u_ditherScale.value = value,
-    setAudioIntensity: (value) => material.uniforms.u_audioIntensity.value = value
+    setAudioIntensity: (value) => material.uniforms.u_audioIntensity.value = value,
+    setBgColorR: (value) => material.uniforms.u_bgColorR.value = value / 255.0,
+    setBgColorG: (value) => material.uniforms.u_bgColorG.value = value / 255.0,
+    setBgColorB: (value) => material.uniforms.u_bgColorB.value = value / 255.0
 };
