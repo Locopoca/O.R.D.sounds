@@ -1,7 +1,7 @@
-import {joinRoom} from 'https://esm.run/trystero/torrent'
+import {joinRoom} from 'https://esm.run/trystero'
 
 const config = { appId: 'o.r.d.sounds' };
-const roomId = 'main-room'; // Fixed room ID
+const roomId = 'room'; // Fixed room ID
 const joinButton = document.getElementById('join-room');
 const peerInfo = document.getElementById('peer-info');
 const chat = document.getElementById('chat');
