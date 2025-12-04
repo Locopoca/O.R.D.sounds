@@ -1,6 +1,16 @@
-import {joinRoom} from 'https://esm.run/trystero'
+import {joinRoom} from 'https://esm.run/trystero/nostr'
 
-const config = { appId: 'o.r.d.sounds' };
+const config = {
+  appId: 'o.r.d.sounds',
+  identifier: 'ozzy@NostrVerified.com',
+  relays: [
+    'wss://relay.damus.io',
+    'wss://nos.lol',
+    'wss://relay.snort.social',
+    'wss://relay.nostr.band',
+    'wss://relay.verified-nostr.com'
+  ]
+};
 const roomId = 'room'; // Fixed room ID
 const joinButton = document.getElementById('join-room');
 const peerInfo = document.getElementById('peer-info');
